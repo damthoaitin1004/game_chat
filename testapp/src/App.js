@@ -4,6 +4,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import OnlinePlayers from './components/OnlinePlayers';
 import GameRoom from './components/GameRoom';
+import ChessGame from './components/GameRoomChess';
 // import Login from './components/Login';
 // import Register from './Register';
 // import OnlinePlayers from './OnlinePlayers';
@@ -17,6 +18,8 @@ function App() {
         <Route path="/register" element={<Register/>} />
         <Route path="/online-players" element={<OnlinePlayers />} />
         <Route path="/game-room/:roomId" element={<GameRoom />} />
+        <Route path="/game-room-chess/" element={<ChessGame/>} />
+
       </Routes>
     </Router>
   );

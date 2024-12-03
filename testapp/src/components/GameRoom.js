@@ -4,6 +4,8 @@ import { ref, onValue, set, push, remove } from 'firebase/database';
 import { useParams, useNavigate } from 'react-router-dom';
 import decodeJWT from './Jwt';
 import './GameRoom.css';
+import Swal from 'sweetalert2';
+
 function GameRoom() {
   const { roomId } = useParams(); // Extract roomId from URL
   const navigate = useNavigate();
@@ -49,14 +51,14 @@ function GameRoom() {
         console.log("Dữ liệu từ Firebase:", data); // Debug log
 
         if (data && Array.isArray(data.board)) {
-          const updatedBoard = Array(9).fill(null);
-          data.board.forEach((cell, index) => {
-            if (index < 9) {
-              updatedBoard[index] = cell; // Copy values from data.board
-            }
-          });
+          // const updatedBoard = Array(9).fill("null");
+          // data.board.forEach((cell, index) => {
+          //   if (index < 9) {
+          //     updatedBoard[index] = cell; // Copy values from data.board
+          //   }
+          // });
            // Create a new board with 9 cells
-          // const updatedBoard = data.board.map(cell => (cell === "null" ? null : cell));
+          const updatedBoard = data.board.map(cell => (cell === "null" ? null : cell));
           setBoard(updatedBoard);
           setIsXNext(data.isXNext);
           setWinner(data.winner);
@@ -94,7 +96,7 @@ function GameRoom() {
 
   // Handle a player's move
   const handleMove = (index) => {
-   
+console.log(board[index]);
 
     if (board[index] || winner || !roomId || !userInfo) return; // Ignore invalid moves
 console.log(roomId.split('_')[1]);
@@ -105,20 +107,21 @@ console.log(roomId.split('_')[1]);
     console.log(!isPlayerO && !isXNext);
     console.log(board);
 
-    if ((isXNext && !isPlayerX) || (!isXNext && !isPlayerO)) return;
+    if ((isXNext && !isPlayerX) || (!isXNext && !isPlayerO)) return Swal.fire('Vui lòng đợi đối thủ!', '', 'success');
+    ;
 
     const newBoard = [...board];
     newBoard[index] = isXNext ? 'X' : 'O';
     const newIsXNext = !isXNext;
     const newWinner = calculateWinner(newBoard);
-    // const updatedBoard = newBoard.map(cell => (cell === null ? "null" : cell));
+    const updatedBoard = newBoard.map(cell => (cell === null ? "null" : cell));
 
-    console.log(newBoard);
+    console.log(updatedBoard);
     
 
     // Update Firebase with the new board state
     set(ref(db, `gameRooms/${roomId}/board`), {
-      board: newBoard,
+      board: updatedBoard,
       isXNext: newIsXNext,
       winner: newWinner,
     });
@@ -148,7 +151,7 @@ console.log(roomId.split('_')[1]);
 
     // Reset the board in Firebase
     set(ref(db, `gameRooms/${roomId}/board`), {
-      board: Array(9).fill(null),
+      board: Array(9).fill("null"),
       isXNext: true,
       winner: null,
     });
@@ -204,7 +207,7 @@ console.log(roomId.split('_')[1]);
               fontSize: '24px',
             }}
           >
-           {cell}
+           {cell != "null" ? cell : ""}
     </div>
         ))}
       </div>
